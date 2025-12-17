@@ -92,11 +92,16 @@ export function DataProvider({ children }) {
             });
             if (res.ok) {
                 const newCat = await res.json();
-                setCategories([...categories, newCat]);
+                setCategories(prev => [...prev, newCat]);
+                return;
             }
         } catch (err) {
-            console.error('Failed to add category:', err);
+            console.warn('API not available, adding locally:', err);
         }
+        // Fallback: add locally
+        const maxId = Math.max(...categories.map(c => c.id), 0);
+        const newCat = { ...category, id: maxId + 1 };
+        setCategories(prev => [...prev, newCat]);
     };
 
     // Update category
@@ -108,13 +113,17 @@ export function DataProvider({ children }) {
                 body: JSON.stringify(updates)
             });
             if (res.ok) {
-                setCategories(categories.map(cat =>
+                setCategories(prev => prev.map(cat =>
                     cat.id === id ? { ...cat, ...updates } : cat
                 ));
+                return;
             }
         } catch (err) {
-            console.error('Failed to update category:', err);
+            console.warn('API not available, updating locally:', err);
         }
+        setCategories(prev => prev.map(cat =>
+            cat.id === id ? { ...cat, ...updates } : cat
+        ));
     };
 
     // Delete category
@@ -122,11 +131,13 @@ export function DataProvider({ children }) {
         try {
             const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' });
             if (res.ok) {
-                setCategories(categories.filter(cat => cat.id !== id && cat.parent_id !== id));
+                setCategories(prev => prev.filter(cat => cat.id !== id && cat.parent_id !== id));
+                return;
             }
         } catch (err) {
-            console.error('Failed to delete category:', err);
+            console.warn('API not available, deleting locally:', err);
         }
+        setCategories(prev => prev.filter(cat => cat.id !== id && cat.parent_id !== id));
     };
 
     // Calculate account balances
@@ -166,11 +177,15 @@ export function DataProvider({ children }) {
             });
             if (res.ok) {
                 const newTx = await res.json();
-                setTransactions([newTx, ...transactions]);
+                setTransactions(prev => [newTx, ...prev]);
+                return;
             }
         } catch (err) {
-            console.error('Failed to add transaction:', err);
+            console.warn('API not available, adding locally:', err);
         }
+        const maxId = Math.max(...transactions.map(t => t.id), 0);
+        const newTx = { ...transaction, id: maxId + 1 };
+        setTransactions(prev => [newTx, ...prev]);
     };
 
     // Update transaction
@@ -182,13 +197,17 @@ export function DataProvider({ children }) {
                 body: JSON.stringify(updates)
             });
             if (res.ok) {
-                setTransactions(transactions.map(tx =>
+                setTransactions(prev => prev.map(tx =>
                     tx.id === id ? { ...tx, ...updates } : tx
                 ));
+                return;
             }
         } catch (err) {
-            console.error('Failed to update transaction:', err);
+            console.warn('API not available, updating locally:', err);
         }
+        setTransactions(prev => prev.map(tx =>
+            tx.id === id ? { ...tx, ...updates } : tx
+        ));
     };
 
     // Delete transaction
@@ -196,11 +215,13 @@ export function DataProvider({ children }) {
         try {
             const res = await fetch(`/api/transactions/${id}`, { method: 'DELETE' });
             if (res.ok) {
-                setTransactions(transactions.filter(t => t.id !== id));
+                setTransactions(prev => prev.filter(t => t.id !== id));
+                return;
             }
         } catch (err) {
-            console.error('Failed to delete transaction:', err);
+            console.warn('API not available, deleting locally:', err);
         }
+        setTransactions(prev => prev.filter(t => t.id !== id));
     };
 
     // Add account
@@ -213,11 +234,15 @@ export function DataProvider({ children }) {
             });
             if (res.ok) {
                 const newAcc = await res.json();
-                setAccounts([...accounts, newAcc]);
+                setAccounts(prev => [...prev, newAcc]);
+                return;
             }
         } catch (err) {
-            console.error('Failed to add account:', err);
+            console.warn('API not available, adding locally:', err);
         }
+        const maxId = Math.max(...accounts.map(a => a.id), 0);
+        const newAcc = { ...account, id: maxId + 1 };
+        setAccounts(prev => [...prev, newAcc]);
     };
 
     // Update account
@@ -229,13 +254,17 @@ export function DataProvider({ children }) {
                 body: JSON.stringify(updates)
             });
             if (res.ok) {
-                setAccounts(accounts.map(acc =>
+                setAccounts(prev => prev.map(acc =>
                     acc.id === id ? { ...acc, ...updates } : acc
                 ));
+                return;
             }
         } catch (err) {
-            console.error('Failed to update account:', err);
+            console.warn('API not available, updating locally:', err);
         }
+        setAccounts(prev => prev.map(acc =>
+            acc.id === id ? { ...acc, ...updates } : acc
+        ));
     };
 
     // Delete account
@@ -248,11 +277,13 @@ export function DataProvider({ children }) {
         try {
             const res = await fetch(`/api/accounts/${id}`, { method: 'DELETE' });
             if (res.ok) {
-                setAccounts(accounts.filter(acc => acc.id !== id));
+                setAccounts(prev => prev.filter(acc => acc.id !== id));
+                return;
             }
         } catch (err) {
-            console.error('Failed to delete account:', err);
+            console.warn('API not available, deleting locally:', err);
         }
+        setAccounts(prev => prev.filter(acc => acc.id !== id));
     };
 
     // Get enriched transactions (with category and account data)
