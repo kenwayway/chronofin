@@ -1,0 +1,13 @@
+name = "chronofin"
+compatibility_date = "2024-12-01"
+pages_build_output_dir = "dist"
+
+# D1 Database binding
+[[d1_databases]]
+binding = "DB"
+database_name = "chronofin"
+database_id = "placeholder" # Will be replaced after creating D1 database
+
+# Environment settings
+[env.production]
+name = "chronofin"

@@ -1,0 +1,139 @@
+/* Accounts Header */
+.accounts-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Total Balance Card */
+.total-balance-card {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+    overflow: hidden;
+}
+
+.total-balance {
+    margin-top: var(--spacing-sm);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.total-balance .currency {
+    font-size: var(--font-size-lg);
+    color: var(--color-text-secondary);
+}
+
+.total-balance .amount {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--color-primary);
+    text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+}
+
+/* Accounts List */
+.accounts-list {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.account-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all 0.15s;
+}
+
+.account-card:hover {
+    border-color: var(--color-text-tertiary);
+    transform: translateX(4px);
+}
+
+.account-main {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.account-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: var(--spacing-md);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.account-info {
+    flex: 1;
+}
+
+.account-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.account-type {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+}
+
+.account-balance {
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+    margin-right: var(--spacing-md);
+}
+
+.account-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.account-card:hover .account-actions {
+    opacity: 1;
+}
+
+/* Icon Picker in Modal */
+.icon-picker {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.icon-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.icon-option:hover {
+    border-color: var(--color-text);
+    color: var(--color-text);
+}
+
+.icon-option.active {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: var(--color-bg);
+}
