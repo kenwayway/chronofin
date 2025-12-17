@@ -103,6 +103,13 @@ function Config() {
     };
 
     const renderIcon = (iconName, size = 16) => {
+        if (!iconName) return <LucideIcons.Tag size={size} />;
+        // Try direct PascalCase first (e.g., "ShoppingCart")
+        if (LucideIcons[iconName]) {
+            const Icon = LucideIcons[iconName];
+            return <Icon size={size} />;
+        }
+        // Convert kebab-case to PascalCase (e.g., "shopping-cart" -> "ShoppingCart")
         const pascalCase = iconName.split('-').map(word =>
             word.charAt(0).toUpperCase() + word.slice(1)
         ).join('');
@@ -269,7 +276,7 @@ function Config() {
                                                 onClick={() => selectIcon(iconName)}
                                                 title={iconName}
                                             >
-                                                {renderIcon(iconName.toLowerCase(), 18)}
+                                                {renderIcon(iconName, 18)}
                                             </button>
                                         ))}
                                     </div>
