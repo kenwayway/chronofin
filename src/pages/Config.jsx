@@ -15,8 +15,10 @@ const PRESET_COLORS = [
 const ALL_ICON_NAMES = Object.keys(LucideIcons).filter(key =>
     key !== 'default' &&
     key !== 'createLucideIcon' &&
-    typeof LucideIcons[key] === 'function' &&
-    key[0] === key[0].toUpperCase()
+    key !== 'icons' &&
+    /^[A-Z][a-zA-Z0-9]*$/.test(key) &&
+    !key.endsWith('Icon') &&
+    !key.startsWith('Lucide')
 );
 
 function Config() {
@@ -255,7 +257,7 @@ function Config() {
                                 <label className="form-label">Icon</label>
                                 <div className="icon-input-wrapper">
                                     <span className="icon-preview" style={{ color: formData.color }}>
-                                        {renderIcon(formData.icon, 18)}
+                                        {renderIcon(filteredIcons.length > 0 ? filteredIcons[0] : formData.icon, 18)}
                                     </span>
                                     <input
                                         type="text"
