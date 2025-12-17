@@ -2,16 +2,6 @@
     padding-bottom: var(--spacing-xl);
 }
 
-.period-selector {
-    background: var(--color-bg-secondary);
-    padding: 4px 12px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    font-size: var(--font-size-xs);
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-}
-
 /* Summary Cards */
 .summary-cards {
     display: grid;
@@ -41,12 +31,10 @@
 
 .summary-amount.income {
     color: var(--color-income);
-    text-shadow: 0 0 5px rgba(0, 255, 157, 0.2);
 }
 
 .summary-amount.expense {
     color: var(--color-expense);
-    text-shadow: 0 0 5px rgba(255, 85, 85, 0.2);
 }
 
 .balance-card {
@@ -62,59 +50,6 @@
 
 .balance-card .summary-amount {
     font-size: var(--font-size-xl);
-}
-
-/* Category Breakdown */
-.category-breakdown {
-    background: var(--color-bg-secondary);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-md);
-}
-
-.category-breakdown h3 {
-    font-size: var(--font-size-sm);
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
-    margin-bottom: var(--spacing-md);
-    padding-bottom: var(--spacing-xs);
-    border-bottom: 1px solid var(--color-border);
-}
-
-.category-stat {
-    margin-bottom: var(--spacing-md);
-}
-
-.category-stat:last-child {
-    margin-bottom: 0;
-}
-
-.category-name {
-    font-weight: 600;
-}
-
-.category-amount {
-    font-family: var(--font-sans);
-}
-
-.category-bar-bg {
-    height: 6px;
-    background: #252525;
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 2px;
-}
-
-.category-bar {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 0.5s ease-out;
-}
-
-.category-percent {
-    text-align: right;
-    font-size: 10px;
-    color: var(--color-text-tertiary);
 }
 
 /* Stats Actions */
@@ -136,17 +71,10 @@
     font-size: var(--font-size-sm);
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
-.export-btn:hover {
-    background: var(--color-bg);
-    border-color: var(--color-text-tertiary);
-    transform: translateY(-1px);
-}
-
-/* Pie Chart */
-.pie-chart-section {
+/* Chart Section with Tabs */
+.chart-section {
     background: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
@@ -154,13 +82,32 @@
     margin-bottom: var(--spacing-lg);
 }
 
-.pie-chart-section h3 {
-    font-size: var(--font-size-sm);
-    text-transform: uppercase;
-    color: var(--color-text-secondary);
+.chart-tabs {
+    display: flex;
+    gap: var(--spacing-sm);
     margin-bottom: var(--spacing-md);
-    padding-bottom: var(--spacing-xs);
+    padding-bottom: var(--spacing-sm);
     border-bottom: 1px solid var(--color-border);
+}
+
+.chart-tab {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.chart-tab.active {
+    background: var(--color-bg);
+    border-color: var(--color-text);
+    color: var(--color-text);
+}
+
+.chart-content {
+    min-height: 200px;
 }
 
 .pie-chart-container {
@@ -174,22 +121,157 @@
     height: 200px;
 }
 
-/* Category stat header with color dot */
-.category-stat-header {
+/* Bar Chart */
+.bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.bar-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 60px;
+    align-items: center;
+    gap: 12px;
+}
+
+.bar-label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bar-track {
+    height: 20px;
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: var(--radius-sm);
+}
+
+.bar-value {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-align: right;
+}
+
+/* Chart Legend */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--color-border);
+}
+
+.legend-item {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: 4px;
-    font-size: var(--font-size-sm);
+    gap: 6px;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
 }
 
-.category-color-dot {
-    width: 10px;
-    height: 10px;
+.legend-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    flex-shrink: 0;
 }
 
-.category-stat-header .category-name {
-    flex: 1;
+/* Calendar */
+.calendar-section {
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.calendar-header h3 {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.weekday {
+    text-align: center;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-tertiary);
+    padding: 4px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+}
+
+.calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    font-size: var(--font-size-sm);
+    gap: 2px;
+}
+
+.calendar-day.empty {
+    background: transparent;
+}
+
+.calendar-day.has-tx {
+    border: 1px solid var(--color-border);
+}
+
+.day-number {
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.day-amount {
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.day-amount.positive {
+    color: var(--color-income);
+}
+
+.day-amount.negative {
+    color: var(--color-expense);
 }

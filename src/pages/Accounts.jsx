@@ -18,6 +18,19 @@ const ACCOUNT_TYPE_LABELS = {
     'credit': 'Credit Card',
 };
 
+const CURRENCIES = [
+    { code: 'CAD', symbol: '$', name: 'Canadian Dollar' },
+    { code: 'USD', symbol: '$', name: 'US Dollar' },
+    { code: 'CNY', symbol: '¥', name: 'Chinese Yuan' },
+    { code: 'EUR', symbol: '€', name: 'Euro' },
+    { code: 'GBP', symbol: '£', name: 'British Pound' },
+    { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+];
+
+const getCurrencySymbol = (code) => {
+    return CURRENCIES.find(c => c.code === code)?.symbol || '$';
+};
+
 const PRESET_COLORS = [
     '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#14b8a6',
     '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#d946ef',
@@ -25,7 +38,7 @@ const PRESET_COLORS = [
 ];
 
 function Accounts() {
-    const { accounts, totalBalance, addAccount, updateAccount, deleteAccount } = useData();
+    const { accounts, addAccount, updateAccount, deleteAccount } = useData();
     const [showModal, setShowModal] = useState(false);
     const [editingAccount, setEditingAccount] = useState(null);
     const [formData, setFormData] = useState({
@@ -33,7 +46,8 @@ function Accounts() {
         type: 'bank',
         color: PRESET_COLORS[0],
         icon: 'wallet',
-        initial_balance: 0
+        initial_balance: 0,
+        currency: 'CAD'
     });
 
     const getIcon = (iconName) => {
@@ -47,7 +61,8 @@ function Accounts() {
             type: 'bank',
             color: PRESET_COLORS[0],
             icon: 'wallet',
-            initial_balance: 0
+            initial_balance: 0,
+            currency: 'CAD'
         });
         setEditingAccount(null);
         setShowModal(false);
@@ -60,7 +75,8 @@ function Accounts() {
             type: account.type,
             color: account.color,
             icon: account.icon,
-            initial_balance: account.initial_balance
+            initial_balance: account.initial_balance,
+            currency: account.currency || 'CAD'
         });
         setShowModal(true);
     };
@@ -80,7 +96,8 @@ function Accounts() {
             type: formData.type,
             color: formData.color,
             icon: formData.icon,
-            initial_balance: parseFloat(formData.initial_balance)
+            initial_balance: parseFloat(formData.initial_balance),
+            currency: formData.currency
         };
 
         if (editingAccount) {
@@ -92,6 +109,14 @@ function Accounts() {
         resetForm();
     };
 
+    // Group accounts by currency for totals
+    const balanceByCurrency = accounts.reduce((acc, account) => {
+        const currency = account.currency || 'CAD';
+        if (!acc[currency]) acc[currency] = 0;
+        acc[currency] += account.balance;
+        return acc;
+    }, {});
+
     return (
         <div className="accounts">
             <div className="accounts-header">
@@ -100,13 +125,17 @@ function Accounts() {
                 </button>
             </div>
 
-            {/* Total Balance Card */}
-            <div className="total-balance-card">
-                <span className="text-sm text-secondary">Total Balance</span>
-                <div className="total-balance">
-                    <span className="currency">¥</span>
-                    <span className="amount">{totalBalance.toFixed(2)}</span>
-                </div>
+            {/* Total Balance Cards by Currency */}
+            <div className="balance-cards">
+                {Object.entries(balanceByCurrency).map(([currency, balance]) => (
+                    <div key={currency} className="total-balance-card">
+                        <span className="text-sm text-secondary">{currency} Balance</span>
+                        <div className="total-balance">
+                            <span className="currency">{getCurrencySymbol(currency)}</span>
+                            <span className="amount">{balance.toFixed(2)}</span>
+                        </div>
+                    </div>
+                ))}
             </div>
 
             {/* Accounts List */}
@@ -123,12 +152,12 @@ function Accounts() {
                             <div className="account-info">
                                 <div className="account-name">{account.name}</div>
                                 <div className="account-type text-tertiary">
-                                    {ACCOUNT_TYPE_LABELS[account.type] || account.type}
+                                    {ACCOUNT_TYPE_LABELS[account.type] || account.type} · {account.currency || 'CAD'}
                                 </div>
                             </div>
 
                             <div className="account-balance">
-                                ¥{account.balance.toFixed(2)}
+                                {getCurrencySymbol(account.currency)}{account.balance.toFixed(2)}
                             </div>
                         </div>
 
@@ -166,17 +195,32 @@ function Accounts() {
                                 />
                             </div>
 
-                            <div className="form-group">
-                                <label className="form-label">Type</label>
-                                <select
-                                    className="form-input"
-                                    value={formData.type}
-                                    onChange={e => setFormData({ ...formData, type: e.target.value })}
-                                >
-                                    {Object.entries(ACCOUNT_TYPE_LABELS).map(([value, label]) => (
-                                        <option key={value} value={value}>{label}</option>
-                                    ))}
-                                </select>
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label className="form-label">Type</label>
+                                    <select
+                                        className="form-input"
+                                        value={formData.type}
+                                        onChange={e => setFormData({ ...formData, type: e.target.value })}
+                                    >
+                                        {Object.entries(ACCOUNT_TYPE_LABELS).map(([value, label]) => (
+                                            <option key={value} value={value}>{label}</option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="form-label">Currency</label>
+                                    <select
+                                        className="form-input"
+                                        value={formData.currency}
+                                        onChange={e => setFormData({ ...formData, currency: e.target.value })}
+                                    >
+                                        {CURRENCIES.map(c => (
+                                            <option key={c.code} value={c.code}>{c.code} ({c.symbol})</option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             <div className="form-group">

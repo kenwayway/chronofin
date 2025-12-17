@@ -1,9 +1,12 @@
+import { useState } from 'react';
 import { useData } from '../contexts/DataContext';
-import { Download } from 'lucide-react';
+import { Download, ChevronLeft, ChevronRight } from 'lucide-react';
 import './Statistics.css';
 
 function Statistics() {
-    const { transactions, categories } = useData();
+    const { transactions } = useData();
+    const [chartTab, setChartTab] = useState('pie'); // 'pie' or 'bar'
+    const [calendarDate, setCalendarDate] = useState(new Date());
 
     // Calculate stats for current month
     const now = new Date();
@@ -47,7 +50,7 @@ function Statistics() {
         const center = size / 2;
         const radius = 80;
 
-        let currentAngle = -90; // Start from top
+        let currentAngle = -90;
         const paths = [];
 
         sortedCategories.forEach(([name, { amount, color }]) => {
@@ -80,6 +83,80 @@ function Statistics() {
             </svg>
         );
     };
+
+    // Generate bar chart
+    const generateBarChart = () => {
+        if (sortedCategories.length === 0) return null;
+
+        return (
+            <div className="bar-chart">
+                {sortedCategories.map(([name, { amount, color }]) => {
+                    const percentage = (amount / maxAmount) * 100;
+                    return (
+                        <div key={name} className="bar-item">
+                            <div className="bar-label">{name}</div>
+                            <div className="bar-track">
+                                <div className="bar-fill" style={{ width: `${percentage}%`, background: color }} />
+                            </div>
+                            <div className="bar-value">¥{amount.toFixed(0)}</div>
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    };
+
+    // Calendar functions
+    const getCalendarDays = () => {
+        const year = calendarDate.getFullYear();
+        const month = calendarDate.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startWeekday = firstDay.getDay();
+
+        const days = [];
+
+        // Empty cells for days before month starts
+        for (let i = 0; i < startWeekday; i++) {
+            days.push({ day: null, amount: 0 });
+        }
+
+        // Days of the month
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayStart = new Date(year, month, day).getTime();
+            const dayEnd = new Date(year, month, day, 23, 59, 59).getTime();
+
+            const dayTransactions = transactions.filter(
+                tx => tx.date >= dayStart && tx.date <= dayEnd
+            );
+
+            const dayIncome = dayTransactions
+                .filter(tx => tx.type === 'income')
+                .reduce((sum, tx) => sum + tx.amount, 0);
+
+            const dayExpense = dayTransactions
+                .filter(tx => tx.type === 'expense')
+                .reduce((sum, tx) => sum + tx.amount, 0);
+
+            const net = dayIncome - dayExpense;
+
+            days.push({ day, amount: net, hasTransactions: dayTransactions.length > 0 });
+        }
+
+        return days;
+    };
+
+    const prevMonth = () => {
+        setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() - 1, 1));
+    };
+
+    const nextMonth = () => {
+        setCalendarDate(new Date(calendarDate.getFullYear(), calendarDate.getMonth() + 1, 1));
+    };
+
+    const calendarDays = getCalendarDays();
+    const monthName = calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
     // Export transactions as CSV
     const handleExport = () => {
@@ -134,51 +211,77 @@ function Statistics() {
                 </div>
             </div>
 
-            {/* Pie Chart */}
+            {/* Chart Section with Tabs */}
             {sortedCategories.length > 0 && (
-                <div className="pie-chart-section">
-                    <h3>Expense Distribution</h3>
-                    <div className="pie-chart-container">
-                        {generatePieChart()}
+                <div className="chart-section">
+                    <div className="chart-tabs">
+                        <button
+                            className={`chart-tab ${chartTab === 'pie' ? 'active' : ''}`}
+                            onClick={() => setChartTab('pie')}
+                        >
+                            Pie Chart
+                        </button>
+                        <button
+                            className={`chart-tab ${chartTab === 'bar' ? 'active' : ''}`}
+                            onClick={() => setChartTab('bar')}
+                        >
+                            Bar Chart
+                        </button>
+                    </div>
+                    <div className="chart-content">
+                        {chartTab === 'pie' ? (
+                            <div className="pie-chart-container">
+                                {generatePieChart()}
+                            </div>
+                        ) : (
+                            generateBarChart()
+                        )}
+                    </div>
+                    {/* Legend */}
+                    <div className="chart-legend">
+                        {sortedCategories.map(([name, { color }]) => (
+                            <div key={name} className="legend-item">
+                                <span className="legend-dot" style={{ background: color }} />
+                                <span>{name}</span>
+                            </div>
+                        ))}
                     </div>
                 </div>
             )}
 
-            {/* Category Breakdown */}
-            {sortedCategories.length > 0 && (
-                <div className="category-breakdown">
-                    <h3>Expense by Category</h3>
-
-                    {sortedCategories.map(([name, { amount, color }]) => {
-                        const percentage = (amount / maxAmount) * 100;
-                        const ofTotal = (amount / totalExpense) * 100;
-
-                        return (
-                            <div key={name} className="category-stat">
-                                <div className="category-stat-header">
-                                    <span className="category-color-dot" style={{ background: color }} />
-                                    <span className="category-name">{name}</span>
-                                    <span className="category-amount">¥{amount.toFixed(2)}</span>
-                                </div>
-
-                                <div className="category-bar-bg">
-                                    <div
-                                        className="category-bar"
-                                        style={{
-                                            width: `${percentage}%`,
-                                            background: color,
-                                        }}
-                                    />
-                                </div>
-
-                                <div className="category-percent text-sm text-tertiary">
-                                    {ofTotal.toFixed(1)}%
-                                </div>
-                            </div>
-                        );
-                    })}
+            {/* Calendar */}
+            <div className="calendar-section">
+                <div className="calendar-header">
+                    <button className="calendar-nav" onClick={prevMonth}>
+                        <ChevronLeft size={18} />
+                    </button>
+                    <h3>{monthName}</h3>
+                    <button className="calendar-nav" onClick={nextMonth}>
+                        <ChevronRight size={18} />
+                    </button>
                 </div>
-            )}
+                <div className="calendar-weekdays">
+                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => (
+                        <div key={d} className="weekday">{d}</div>
+                    ))}
+                </div>
+                <div className="calendar-grid">
+                    {calendarDays.map((item, idx) => (
+                        <div key={idx} className={`calendar-day ${item.day ? '' : 'empty'} ${item.hasTransactions ? 'has-tx' : ''}`}>
+                            {item.day && (
+                                <>
+                                    <span className="day-number">{item.day}</span>
+                                    {item.amount !== 0 && (
+                                        <span className={`day-amount ${item.amount > 0 ? 'positive' : 'negative'}`}>
+                                            {item.amount > 0 ? '+' : ''}{item.amount.toFixed(0)}
+                                        </span>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }

@@ -42,10 +42,10 @@ const mockCategories = [
 ];
 
 const mockAccounts = [
-    { id: 1, name: 'Cash', type: 'cash', color: '#10b981', icon: 'banknote', initial_balance: 500 },
-    { id: 2, name: 'Bank of China', type: 'bank', color: '#3b82f6', icon: 'building-2', initial_balance: 5000 },
-    { id: 3, name: 'WeChat Pay', type: 'digital', color: '#22c55e', icon: 'smartphone', initial_balance: 1000 },
-    { id: 4, name: 'Alipay', type: 'digital', color: '#06b6d4', icon: 'credit-card', initial_balance: 1500 },
+    { id: 1, name: 'Cash', type: 'cash', color: '#10b981', icon: 'banknote', initial_balance: 500, currency: 'CAD' },
+    { id: 2, name: 'Bank of China', type: 'bank', color: '#3b82f6', icon: 'building-2', initial_balance: 5000, currency: 'CNY' },
+    { id: 3, name: 'WeChat Pay', type: 'digital', color: '#22c55e', icon: 'smartphone', initial_balance: 1000, currency: 'CNY' },
+    { id: 4, name: 'Alipay', type: 'digital', color: '#06b6d4', icon: 'credit-card', initial_balance: 1500, currency: 'CNY' },
 ];
 
 const mockTransactions = [

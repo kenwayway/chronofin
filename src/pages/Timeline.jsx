@@ -36,7 +36,9 @@ function Timeline() {
     const sortedDates = Object.keys(groupedTransactions).sort((a, b) => b.localeCompare(a));
 
     const getDateLabel = (dateString) => {
-        const date = new Date(dateString);
+        // Parse yyyy-MM-dd as local time, not UTC
+        const [year, month, day] = dateString.split('-').map(Number);
+        const date = new Date(year, month - 1, day);
         if (isToday(date)) return 'Today';
         if (isYesterday(date)) return 'Yesterday';
         return format(date, 'MMM d, EEEE');
@@ -107,7 +109,7 @@ function Timeline() {
                                         <div className="transaction-amount">
                                             <span className={tx.type === 'income' ? 'income' : 'expense'}>
                                                 {tx.type === 'income' ? '+' : '-'}
-                                                ¥{tx.amount.toFixed(2)}
+                                                {tx.account?.currency === 'CNY' ? '¥' : tx.account?.currency === 'EUR' ? '€' : tx.account?.currency === 'GBP' ? '£' : '$'}{tx.amount.toFixed(2)}
                                             </span>
                                         </div>
                                     </div>
