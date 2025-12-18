@@ -39,28 +39,56 @@ export function DataProvider({ children }) {
             try {
                 setLoading(true);
 
-                const [catRes, accRes, txRes] = await Promise.all([
-                    fetch('/api/categories'),
-                    fetch('/api/accounts'),
-                    fetch('/api/transactions')
-                ]);
+                // Fetch each endpoint independently
+                let cats = defaultCategories;
+                let accs = defaultAccounts;
+                let txs = [];
 
-                if (catRes.ok && accRes.ok && txRes.ok) {
-                    const [cats, accs, txs] = await Promise.all([
-                        catRes.json(),
-                        accRes.json(),
-                        txRes.json()
-                    ]);
-                    setCategories(cats.length > 0 ? cats : defaultCategories);
-                    setAccounts(accs.length > 0 ? accs : defaultAccounts);
-                    setTransactions(txs);
-                } else {
-                    // API not available, use defaults
-                    console.warn('API not available, using default data');
-                    setCategories(defaultCategories);
-                    setAccounts(defaultAccounts);
-                    setTransactions([]);
+                try {
+                    const catRes = await fetch('/api/categories');
+                    if (catRes.ok) {
+                        const data = await catRes.json();
+                        if (Array.isArray(data) && data.length > 0) {
+                            cats = data;
+                        }
+                    } else {
+                        console.warn('Categories API error:', catRes.status);
+                    }
+                } catch (e) {
+                    console.warn('Categories fetch failed:', e);
                 }
+
+                try {
+                    const accRes = await fetch('/api/accounts');
+                    if (accRes.ok) {
+                        const data = await accRes.json();
+                        if (Array.isArray(data) && data.length > 0) {
+                            accs = data;
+                        }
+                    } else {
+                        console.warn('Accounts API error:', accRes.status);
+                    }
+                } catch (e) {
+                    console.warn('Accounts fetch failed:', e);
+                }
+
+                try {
+                    const txRes = await fetch('/api/transactions');
+                    if (txRes.ok) {
+                        const data = await txRes.json();
+                        if (Array.isArray(data)) {
+                            txs = data;
+                        }
+                    } else {
+                        console.warn('Transactions API error:', txRes.status);
+                    }
+                } catch (e) {
+                    console.warn('Transactions fetch failed:', e);
+                }
+
+                setCategories(cats);
+                setAccounts(accs);
+                setTransactions(txs);
             } catch (err) {
                 console.warn('Failed to fetch data, using defaults:', err);
                 setCategories(defaultCategories);
